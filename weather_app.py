@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 import joblib
 import datetime
 import requests
+import time
 
 # Constants
 LAT = 38.6270 # St. Louis latitude
@@ -17,33 +18,79 @@ SCALER_PATH = 'scaler.save'
 model = load_model(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
 
-# Helper function to fetch weather data from Open-Meteo
-def fetch_weather_openmeteo(lat, lon, date: datetime.date):
-    '''
-    Fetch daily weather data (TMIN, TMAX, precipitation, and windspeed)
-    from the Open-Meteo Archive API for a specific date.
-    Returns: (tmin, tmax, prcp, wind)
-    '''
-    base_url = "https://archive-api.open-meteo.com/v1/archive"
-    params = {
-        "latitude": lat,
-        "longitude": lon,
-        "start_date": date.isoformat(),
-        "end_date": date.isoformat(),
-        "daily": "temperature_2m_min,temperature_2m_max,precipitation_sum,windspeed_10m_max",
-        "timezone": "America/Chicago"
-    }
+# Helper: Fetch weather with retry
+def fetch_weather_with_retry(url, retries=3, delay=5):
+    for i in range(retries):
+        try:
+            resp = requests.get(url, timeout=30)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.exceptions.RequestException as e:
+            if i < retries - 1:
+                time.sleep(delay)
+            else:
+                raise RuntimeError(f"Failed to fetch weather data after {retries} attempts: {e}")
 
-    resp = requests.get(base_url, params=params)
-    resp.raise_for_status()
-    data = resp.json()
-    # main.temp_min, main.temp_max, wind.speed, rain.1h or snow.1h
-    tmin = data['daily']['temperature_2m_min'][0]
-    tmax = data['daily']['temperature_2m_max'][0]
-    prcp = data['daily']['precipitation_sum'][0]
-    wind = data['daily']['windspeed_10m_max'][0]
+# Helper: Fetch weather data
+def fetch_weather(lat, lon, date):
+    '''
+    Fetch TMIN, TMAX, precipitation and wind speed.
+    Uses historical data for past dates and forcast for today/future dates.
+    '''
+
+    if isinstance(date, dict):
+        date = datetime.date(date['year'], date['month'], date['day'])
+    elif isinstance(date, datetime.datetime):
+        date = date.date()
+
+    today = datetime.date.today()
+
+    if date <= today:
+        # Historical data
+        url = (
+            f"https://archive-api.open-meteo.com/v1/archive?"
+            f"latitude={lat}&longitude={lon}&start_date={date}&end_date={date}"
+            f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max"
+            f"&timezone=America/Chicago"
+        )
+    else:
+        # Forecast data
+        url = (
+            f"https://api.open-meteo.com/v1/forecast?"
+            f"latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,"
+            f"precipitation_sum,windspeed_10m_max&timezone=America/Chicago"
+            f"&start_date={date}&end_date={date}"
+        )
+
+    data = fetch_weather_with_retry(url)
+
+    if date <= today:
+        try:
+            daily = data['daily']
+            tmin = data['daily']['temperature_2m_min'][0]
+            tmax = data['daily']['temperature_2m_max'][0]
+            prcp = data['daily']['precipitation_sum'][0]
+            wind = data['daily']['windspeed_10m_max'][0]
+        except KeyError:
+            raise RuntimeError("Unexpected historical data format from API")
+    else:
+        # Forecast API returns arrays for multiple days; find the index of the requested date
+        try:
+            daily = data['daily']
+            date_index = daily['time'].index(date.isoformat())
+            tmin = daily['temperature_2m_min'][date_index]
+            tmax = daily['temperature_2m_max'][date_index]
+            prcp = daily['precipitation_sum'][date_index]
+            wind = daily['windspeed_10m_max'][date_index]
+        except (KeyError, ValueError):
+            raise RuntimeError(f"Forecast data not available for {date}")
 
     return tmin, tmax, prcp, wind
+
+# Cached wrapper for Streamlit
+@st.cache_data(ttl=3600) # cache results for 1 hour
+def get_weather_data(date):
+    return fetch_weather(LAT, LON, date)
 
 # Streamlit UI
 st.title("🌤️St. Louis Temperature Predictor")
@@ -58,13 +105,13 @@ selected_date = st.sidebar.date_input(
     "Choose a date",
     value=datetime.date.today(),
     min_value=datetime.date(2023, 1, 1),
-    max_value=datetime.date.today()
+    max_value=datetime.date.today() + datetime.timedelta(days=7) # allow 7 days ahead
 )
 
 # Fetch data
 with st.spinner("Fetching weather data..."):
     try:
-        tmin_c, tmax_c, prcp, awnd = fetch_weather_openmeteo(LAT, LON, selected_date)
+        tmin_c, tmax_c, prcp, awnd = get_weather_data(selected_date)
     except Exception as e:
         st.error(f"Could not fetch weather data: {e}")
         st.stop()
