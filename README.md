@@ -51,7 +51,7 @@ The app allows users to **predict daily average temperature** interactively.
 * Predicts **average temperature** in Celsius and Fahrenheit.
 * Uses **cached API calls** to reduce latency.
 
-**Run this app:
+**Run this app**:
 ```bash
 streamlit run weather_app.py
 ```
